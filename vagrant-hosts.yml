@@ -1,0 +1,55 @@
+---
+- box:
+    vb: "generic/oracle8"
+  name: "worker-1"
+  nics:
+    - type: "public_network"
+      ip_addr: "192.168.0.190"
+  ram: "1024"
+  vcpu: "1"
+
+
+- box:
+    vb: "generic/oracle8"
+  name: "worker-2"
+  nics:
+    - type: "public_network"
+      ip_addr: "192.168.0.191"
+  ram: "1024"
+  vcpu: "1"
+
+- box:
+    vb: "generic/oracle8"
+  name: "master-1"
+  nics:
+    - type: "public_network"
+      ip_addr: "192.168.0.192"
+  ram: "512"
+  vcpu: "1"
+
+- box:
+    vb: "generic/oracle8"
+  name: "master-2"
+  nics:
+    - type: "public_network"
+      ip_addr: "192.168.0.193"
+  ram: "512"
+  vcpu: "1"
+
+- box:
+    vb: "generic/oracle8"
+  name: "master-3"
+  nics:
+    - type: "public_network"
+      ip_addr: "192.168.0.194"
+  ram: "512"
+  vcpu: "1"
+
+- box:
+    vb: "generic/oracle8"
+  name: "junkyjobbysinglekuber"
+  nics:
+    - type: "public_network"
+      ip_addr: "192.168.0.194"
+  ram: "1024"
+  vcpu: "1"

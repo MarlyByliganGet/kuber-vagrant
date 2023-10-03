@@ -1,0 +1,7 @@
+---
+- name: primary
+  box: debian/stretch64
+  
+
+- name: worker
+  box: debian/stretch64
