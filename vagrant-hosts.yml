@@ -1,6 +1,6 @@
 ---
 - box:
-    vb: "generic/oracle8"
+    vb: "oraclebase/oracle-7"
   name: "worker-1"
   nics:
     - type: "public_network"
@@ -10,7 +10,7 @@
 
 
 - box:
-    vb: "generic/oracle8"
+    vb: "oraclebase/oracle-7"
   name: "worker-2"
   nics:
     - type: "public_network"
@@ -19,7 +19,7 @@
   vcpu: "1"
 
 - box:
-    vb: "generic/oracle8"
+    vb: "oraclebase/oracle-7"
   name: "master-1"
   nics:
     - type: "public_network"
@@ -28,7 +28,7 @@
   vcpu: "1"
 
 - box:
-    vb: "generic/oracle8"
+    vb: "oraclebase/oracle-7"
   name: "master-2"
   nics:
     - type: "public_network"
@@ -37,7 +37,7 @@
   vcpu: "1"
 
 - box:
-    vb: "generic/oracle8"
+    vb: "oraclebase/oracle-7"
   name: "master-3"
   nics:
     - type: "public_network"
@@ -46,7 +46,7 @@
   vcpu: "1"
 
 - box:
-    vb: "generic/oracle8"
+    vb: "oraclebase/oracle-7"
   name: "junkyjobbysinglekuber"
   nics:
     - type: "public_network"

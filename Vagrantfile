@@ -11,6 +11,9 @@ machines = YAML.load_file(File.join(File.dirname(__FILE__), 'vagrant-hosts.yml')
 
 # Create and configure the VMs
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  
+  # Startup script
+  config.vm.provision :shell, path: "bootstrap.sh"
 
   # Always use Vagrant's default insecure key
   config.ssh.insert_key = false
@@ -54,4 +57,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       end # srv.vm.provider 'virtualbox'
     end # config.vm.define
   end # machines.each
+
+  config.vm.provision "ansible" do |ansible|
+    # Ansible groups
+    ansible.playbook = "playbook.yml"
+    ansible.groups = {
+      "group1" => ["worker-[1:2], master-[1:3]"],
+      "group2" => ["junkyjobbysinglekuber"],
+      "all_groups:children" => ["group1", "group2"]
+    }
+  end # Ansible.configure
 end # Vagrant.configure
