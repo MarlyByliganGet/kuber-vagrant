@@ -1,70 +1,37 @@
-# Specify minimum Vagrant version and Vagrant API version
-Vagrant.require_version '>= 1.6.0'
-VAGRANTFILE_API_VERSION = '2'
+IMAGE_NAME = "oraclebase/oracle-7"
 
-# Require 'yaml' module
-require 'yaml'
+Vagrant.configure("2") do |config|
+    config.ssh.insert_key = false
 
-# Read YAML file with VM details (box, CPU, RAM, IP addresses)
-# Edit machines.yml to change VM configuration details
-machines = YAML.load_file(File.join(File.dirname(__FILE__), 'vagrant-hosts.yml'))
-
-# Create and configure the VMs
-Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  
-  # Startup script
-  config.vm.provision :shell, path: "bootstrap.sh"
-
-  # Always use Vagrant's default insecure key
-  config.ssh.insert_key = false
-
-  # Iterate through entries in YAML file to create VMs
-  machines.each do |machine|
-
-    # Configure the VMs per details in machines.yml
-    config.vm.define machine['name'] do |srv|
-
-      # Don't check for box updates
-      srv.vm.box_check_update = false
-
-      # Specify the hostname of the VM
-      srv.vm.hostname = machine['name']
-
-      # Specify the Vagrant box to use (use VMware box by default)
-      srv.vm.box = machine['box']['vmw']
-
-      # Configure default synced folder (disable by default)
-      if machine['sync_disabled'] != nil
-        srv.vm.synced_folder '.', '/vagrant', disabled: machine['sync_disabled']
-      else
-        srv.vm.synced_folder '.', '/vagrant', disabled: true
-      end #if machine['sync_disabled']
-
-      # Iterate through networks as per settings in machines.yml
-      machine['nics'].each do |net|
-        if net['ip_addr'] == 'dhcp'
-          srv.vm.network net['type'], type: net['ip_addr']
-        else
-          srv.vm.network net['type'], ip: net['ip_addr']
-        end # if net['ip_addr']
-      end # machine['nics'].each
-
-      # Configure CPU & RAM per settings in machines.yml (VirtualBox)
-      srv.vm.provider 'virtualbox' do |vb, override|
-        vb.memory = machine['ram']
-        vb.cpus = machine['vcpu']
-        override.vm.box = machine['box']['vb']
-      end # srv.vm.provider 'virtualbox'
-    end # config.vm.define
-  end # machines.each
-
-  config.vm.provision "ansible" do |ansible|
-    # Ansible groups
-    ansible.playbook = "playbook.yml"
-    ansible.groups = {
-      "group1" => ["worker-[1:2], master-[1:3]"],
-      "group2" => ["junkyjobbysinglekuber"],
-      "all_groups:children" => ["group1", "group2"]
-    }
-  end # Ansible.configure
-end # Vagrant.configure
+    config.vm.provider "virtualbox" do |v|
+        v.memory = 1024
+        v.cpus = 1
+    end
+      
+    (1..3).each do |i|
+      config.vm.define "master-#{i}" do |master|
+        master.vm.box = IMAGE_NAME
+        master.vm.network "public_network", ip: "192.168.0.#{i + 10}", bridge: "wlx90de8012d526"
+        master.vm.hostname = "k8s-master"
+        master.vm.provision "ansible" do |ansible|
+            ansible.playbook = "kubernetes-setup/master-playbook.yml"
+            ansible.extra_vars = {
+                node_ip: "192.168.0.#{i + 10}",
+            }
+        end
+    end
+  end
+    (1..2).each do |i|
+        config.vm.define "node-#{i}" do |node|
+            node.vm.box = IMAGE_NAME
+            node.vm.network "public_network", ip: "192.168.0.#{i + 14}"
+            node.vm.hostname = "node-#{i}"
+            node.vm.provision "ansible" do |ansible|
+                ansible.playbook = "kubernetes-setup/node-playbook.yml"
+                ansible.extra_vars = {
+                    node_ip: "192.168.0.#{i + 10}",
+                }
+            end
+        end
+    end
+end

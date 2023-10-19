@@ -8,7 +8,6 @@
   ram: "1024"
   vcpu: "1"
 
-
 - box:
     vb: "oraclebase/oracle-7"
   name: "worker-2"
@@ -50,6 +49,6 @@
   name: "junkyjobbysinglekuber"
   nics:
     - type: "public_network"
-      ip_addr: "192.168.0.194"
+      ip_addr: "192.168.0.195"
   ram: "1024"
   vcpu: "1"
